@@ -1,0 +1,1059 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Visualizer</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        /* Modern CSS Reset */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #0d47a1;
+            --secondary: #00c853;
+            --dark: #263238;
+            --light: #eceff1;
+            --accent: #ff6d00;
+            --error: #d50000;
+            --success: #00c853;
+            --gradient-bg: linear-gradient(135deg, #0d47a1, #00c853);
+        }
+
+        /* Wild Background Animation */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+            background-size: 400% 400%;
+            animation: gradient 15s ease infinite;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: var(--dark);
+            overflow-x: hidden;
+            padding: 40px 20px;
+        }
+
+        @keyframes gradient {
+            0% {
+                background-position: 0% 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        /* Enhanced Neon Header */
+        h1 {
+            font-size: 3.5rem;
+            margin-bottom: 30px;
+            color: white;
+            text-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 15px #0073e6, 0 0 20px #0073e6, 0 0 25px #0073e6;
+            letter-spacing: 3px;
+            animation: pulsate 2.5s infinite alternate;
+            text-transform: uppercase;
+            position: relative;
+            z-index: 2;
+            transition: transform 0.3s ease;
+        }
+
+        h1:hover {
+            transform: scale(1.05);
+        }
+
+        h1::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 3px;
+            bottom: -5px;
+            left: 50%;
+            background: white;
+            transition: all 0.5s ease;
+            transform: translateX(-50%);
+            box-shadow: 0 0 10px #fff, 0 0 20px #0073e6;
+        }
+
+        h1:hover::after {
+            width: 70%;
+        }
+
+        @keyframes pulsate {
+            100% {
+                text-shadow: 0 0 10px #fff, 0 0 20px #fff, 0 0 30px #0073e6, 0 0 40px #0073e6, 0 0 70px #0073e6;
+            }
+            0% {
+                text-shadow: 0 0 2px #fff, 0 0 5px #fff, 0 0 10px #0073e6, 0 0 20px #0073e6, 0 0 40px #0073e6;
+            }
+        }
+
+        /* Enhanced Futuristic Container */
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: auto;
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px);
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2), 0 0 20px rgba(255, 255, 255, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+            animation: fadeIn 0.8s ease-out;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .container:hover {
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3), 0 0 30px rgba(255, 255, 255, 0.6);
+            transform: translateY(-5px);
+        }
+
+        @keyframes fadeIn {
+            from { 
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to { 
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .container::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.3) 0%, transparent 70%);
+            z-index: -1;
+            animation: shine 8s linear infinite;
+        }
+
+        @keyframes shine {
+            0% {
+                transform: rotate(0deg);
+            }
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Enhanced Form Controls */
+        label {
+            font-weight: bold;
+            display: block;
+            margin: 15px 0 5px;
+            color: var(--dark);
+            text-transform: uppercase;
+            font-size: 0.85rem;
+            letter-spacing: 1px;
+            transition: color 0.3s ease;
+            position: relative;
+            padding-left: 5px;
+        }
+
+        label::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 50%;
+            width: 3px;
+            height: 0;
+            background: var(--primary);
+            transform: translateY(-50%);
+            transition: height 0.3s ease;
+        }
+
+        label:hover {
+            color: var(--primary);
+        }
+
+        label:hover::before {
+            height: 80%;
+        }
+
+        select,
+        input[type="file"] {
+            display: block;
+            width: 100%;
+            max-width: 400px;
+            margin: 5px auto 15px;
+            padding: 12px 15px;
+            border-radius: 50px;
+            border: 2px solid transparent;
+            background: var(--light);
+            color: var(--dark);
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+        }
+
+        input[type="file"] {
+            padding: 10px;
+            border: 2px dashed #ccc;
+            background: transparent;
+        }
+
+        input[type="file"]:hover {
+            border-color: var(--secondary);
+            box-shadow: 0 0 15px rgba(0, 200, 83, 0.2);
+        }
+
+        select:hover {
+            border-color: var(--primary);
+            box-shadow: 0 0 15px rgba(13, 71, 161, 0.2);
+        }
+
+        select:focus {
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(13, 71, 161, 0.25);
+            transform: translateY(-2px);
+            border-color: var(--primary);
+        }
+
+        /* Consistent Stylish Button */
+        button {
+            background: var(--gradient-bg);
+            color: white;
+            font-weight: bold;
+            padding: 15px 30px;
+            width: 250px;
+            border: none;
+            border-radius: 50px;
+            font-size: 1rem;
+            margin: 25px auto;
+            cursor: pointer;
+            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            display: block;
+            position: relative;
+            overflow: hidden;
+        }
+
+        button::after {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: -100%;
+            background: linear-gradient(90deg, 
+                       transparent, 
+                       rgba(255, 255, 255, 0.2), 
+                       transparent);
+            transition: 0.5s;
+        }
+
+        button:hover {
+            transform: translateY(-5px) scale(1.05);
+            box-shadow: 0 15px 25px rgba(0, 0, 0, 0.3);
+        }
+
+        button:hover::after {
+            left: 100%;
+        }
+
+        button:active {
+            transform: translateY(0) scale(0.98);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Enhanced Data Display */
+        textarea {
+            width: 100%;
+            height: 150px;
+            margin: 20px 0;
+            padding: 15px;
+            border: none;
+            border-radius: 15px;
+            background: rgba(0, 0, 0, 0.03);
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            resize: vertical;
+            box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+
+        textarea:focus {
+            outline: none;
+            box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.2);
+            background: rgba(0, 0, 0, 0.05);
+            border-color: var(--primary);
+        }
+
+        /* Enhanced Chart Container */
+        canvas {
+            margin: 30px 0;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            background: white;
+            max-height: 600px;
+            padding: 15px;
+            transition: all 0.5s ease;
+            border: 2px solid transparent;
+        }
+
+        canvas:hover {
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+            transform: scale(1.01);
+            border-color: rgba(13, 71, 161, 0.2);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2.5rem;
+            }
+            
+            .container {
+                width: 95%;
+                padding: 20px;
+            }
+            
+            button {
+                padding: 12px 25px;
+                width: 90%;
+                max-width: 250px;
+            }
+        }
+
+        /* Enhanced Controls Layout */
+        .control-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: center;
+            margin: 20px 0;
+            padding: 20px;
+            border-radius: 15px;
+            background: rgba(255, 255, 255, 0.3);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+        }
+
+        .control-group:hover {
+            background: rgba(255, 255, 255, 0.5);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .control-item {
+            flex: 1;
+            min-width: 200px;
+            transition: all 0.3s ease;
+            padding: 10px;
+            border-radius: 10px;
+        }
+
+        .control-item:hover {
+            background: rgba(255, 255, 255, 0.5);
+            transform: translateY(-3px);
+        }
+
+        /* Enhanced Fancy Dividers */
+        .divider {
+            height: 3px;
+            background: linear-gradient(to right, transparent, var(--primary), transparent);
+            margin: 30px 0;
+            border-radius: 50%;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .divider::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, 
+                       transparent, 
+                       rgba(255, 255, 255, 0.7), 
+                       transparent);
+            animation: dividerShine 3s infinite;
+        }
+
+        @keyframes dividerShine {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+
+        /* Custom File Input Enhancement */
+        input[type="file"]::file-selector-button {
+            padding: 0.5em 1em;
+            border-radius: 20px;
+            border: none;
+            background: var(--primary);
+            color: white;
+            margin-right: 1em;
+            transition: all 0.3s ease;
+        }
+
+        input[type="file"]::file-selector-button:hover {
+            background: var(--secondary);
+            transform: scale(1.05);
+        }
+
+        /* Animation for Elements on Load */
+        .control-item, textarea, canvas {
+            animation: slideInUp 0.6s ease backwards;
+        }
+
+        .control-item:nth-child(1) { animation-delay: 0.2s; }
+        .control-item:nth-child(2) { animation-delay: 0.3s; }
+        .control-item:nth-child(3) { animation-delay: 0.4s; }
+        textarea { animation-delay: 0.5s; }
+        canvas { animation-delay: 0.6s; }
+
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Focus States for Accessibility */
+        select:focus, input:focus, button:focus, textarea:focus {
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(13, 71, 161, 0.4);
+        }
+
+  .logout-container {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    padding: 20px 0;
+    margin-top: 20px;
+  }
+
+  .logout-btn {
+    background-color: #f44336;
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    font-size: 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  }
+
+  .logout-btn:hover {
+    background-color: #d32f2f;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  }
+
+  .logout-btn:active {
+    transform: translateY(0);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+  }
+    </style>
+</head>
+
+<body>
+    <h1>Data Visualizer</h1>
+    <div class="container">
+
+        <div class="control-group">
+            <!-- Select Dataset (from MongoDB) -->
+            <div class="control-item">
+                <label for="datasetSelect">Select Dataset:</label>
+                <select id="datasetSelect" onchange="fetchData(this.value)">
+                    <option value="">-- Select --</option>
+                    <option value="Spotify">Spotify</option>
+                    <option value="Uber">Uber</option>
+                    <option value="Amazon">Amazon</option>
+                    <option value="netflix">netflix</option>
+                </select>
+            </div>
+
+            <!-- Upload CSV (Local Storage) -->
+            <div class="control-item">
+                <label for="fileInput">Or Upload CSV File:</label>
+                <input type="file" id="fileInput" accept=".csv" onchange="handleFileUpload(event)">
+            </div>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="control-group">
+            <!-- Select X-Axis & Y-Axis -->
+            <div class="control-item">
+                <label for="xAxisSelect">Select X-Axis:</label>
+                <select id="xAxisSelect"></select>
+            </div>
+
+            <div class="control-item">
+                <label for="yAxisSelect">Select Y-Axis:</label>
+                <select id="yAxisSelect"></select>
+            </div>
+
+            <!-- Graph Type -->
+            <div class="control-item">
+                <label for="graphTypeSelect">Select Graph Type:</label>
+                <select id="graphTypeSelect">
+                    <option value="bar">Bar</option>
+                    <option value="line">Line</option>
+                    <option value="pie">Pie</option>
+                    <option value="doughnut">Doughnut</option>
+                    <option value="radar">Radar Chart</option>
+                   
+                    <option value="scatterTrendline">Scatter Plot with Trendline</option><script src="https://d3js.org/d3.v7.min.js"></script>
+                </select>
+            </div>
+        </div>
+
+        <button onclick="updateGraph()">Generate Awesome Graph</button>
+
+        <!-- Data Display -->
+        <label for="dataTextArea">Data Preview:</label>
+        <textarea id="dataTextArea" readonly></textarea>
+
+        <!-- Chart Display -->
+        <canvas id="myChart"></canvas>
+
+    </div>
+    <div class="logout-container">
+        <button id="logoutButton" class="logout-btn">Logout</button>
+      </div>
+
+      <script>
+       let chartInstance = null; // Store the chart instance
+
+// Fetch Data from MongoDB
+async function fetchData(datasetName) {
+    if (!datasetName) return;
+
+    try {
+        const response = await fetch(`http://127.0.0.1:5000/get_data?dataset=${datasetName}`);
+        const result = await response.json();
+
+        if (result.error) {
+            alert("Error: " + result.error);
+            return;
+        }
+
+        handleData(result.data);
+    } catch (error) {
+        console.error("Error fetching data:", error);
+        alert("Failed to fetch data.");
+    }
+}
+
+// Handle CSV File Upload
+function handleFileUpload(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+        const csvData = e.target.result;
+        const jsonData = parseCSV(csvData);
+        handleData(jsonData);
+    };
+    reader.readAsText(file);
+}
+
+// Parse CSV to JSON
+function parseCSV(csv) {
+    const lines = csv.trim().split("\n");
+    const headers = lines[0].split(",");
+    return lines.slice(1).map(line => {
+        const values = line.split(",");
+        let obj = {};
+        headers.forEach((header, index) => {
+            obj[header.trim()] = isNaN(values[index]) ? values[index].trim() : parseFloat(values[index]);
+        });
+        return obj;
+    });
+}
+
+// Handle Data (MongoDB/CSV)
+function handleData(data) {
+    // Display Data in Text Area
+    const formattedData = data.map(row => JSON.stringify(row)).join("\n");
+    document.getElementById("dataTextArea").value = formattedData;
+
+    // Populate Dropdowns
+    if (data.length > 0) {
+        const keys = Object.keys(data[0]);
+
+        const xDropdown = document.getElementById("xAxisSelect");
+        const yDropdown = document.getElementById("yAxisSelect");
+
+        xDropdown.innerHTML = "";
+        yDropdown.innerHTML = "";
+
+        keys.forEach(key => {
+            const optionX = new Option(key, key);
+            const optionY = new Option(key, key);
+            xDropdown.add(optionX);
+            yDropdown.add(optionY);
+        });
+
+        // Auto-generate initial graph
+        generateGraph(data, keys[0], keys[1], "bar");
+    }
+}
+
+// Update Graph
+function updateGraph() {
+    const xAxis = document.getElementById("xAxisSelect").value;
+    const yAxis = document.getElementById("yAxisSelect").value;
+    const graphType = document.getElementById("graphTypeSelect").value;
+
+    if (!xAxis || !yAxis) {
+        alert("Please select both X-Axis and Y-Axis.");
+        return;
+    }
+
+    const rawData = document.getElementById("dataTextArea").value;
+    const data = rawData.split("\n").map(row => JSON.parse(row));
+
+    generateGraph(data, xAxis, yAxis, graphType);
+}
+
+// Generate Chart.js Graph with Enhanced Visuals
+function generateGraph(data, xAxis, yAxis, graphType) {
+    const labels = data.map(row => row[xAxis]);
+    const values = data.map(row => parseFloat(row[yAxis]));
+
+    // Generate vibrant colors for multiple data points
+    const generateColors = (count) => {
+        const colors = [];
+        const backgroundColors = [];
+        for (let i = 0; i < count; i++) {
+            const hue = (i * 137.5) % 360; // Golden angle approximation for color distribution
+            const saturation = 70 + Math.random() * 30;
+            const lightness = 50 + Math.random() * 10;
+            const alpha = 0.7;
+            
+            colors.push(`hsl(${hue}, ${saturation}%, ${lightness}%)`);
+            backgroundColors.push(`hsla(${hue}, ${saturation}%, ${lightness}%, ${alpha})`);
+        }
+        return { colors, backgroundColors };
+    };
+
+    const { colors, backgroundColors } = generateColors(labels.length);
+
+    const ctx = document.getElementById("myChart").getContext("2d");
+
+    // Destroy old chart if exists
+    if (chartInstance) {
+        chartInstance.destroy();
+    }
+
+    // Check for special chart types added
+    if (graphType === "radar") {
+        chartInstance = createRadarChart(data, xAxis, yAxis, "myChart");
+        return;
+    } else if (graphType === "scatterTrendline") {
+        chartInstance = createScatterPlotWithTrendline(
+            data.map(item => parseFloat(item[xAxis])),
+            data.map(item => parseFloat(item[yAxis])),
+            "myChart",
+            xAxis,
+            yAxis
+        );
+        return;
+    }
+
+    // Chart configuration with enhanced visuals for standard chart types
+    const config = {
+        type: graphType,
+        data: {
+            labels: labels,
+            datasets: [{
+                label: `${yAxis} vs ${xAxis}`,
+                data: values,
+                backgroundColor: graphType === 'line' ? 'rgba(75, 192, 192, 0.6)' : backgroundColors,
+                borderColor: graphType === 'line' ? 'rgba(75, 192, 192, 1)' : colors,
+                borderWidth: 2,
+                pointBackgroundColor: colors,
+                pointBorderColor: '#fff',
+                pointHoverRadius: 8,
+                pointHoverBackgroundColor: '#fff',
+                pointHoverBorderColor: colors,
+                pointHoverBorderWidth: 2,
+                tension: 0.4,  // Smooth curves for line charts
+            }]
+        },
+        options: {
+            responsive: true,
+            animation: {
+                duration: 2000,
+                easing: 'easeOutQuart'
+            },
+            plugins: {
+                legend: {
+                    labels: {
+                        font: {
+                            family: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
+                            size: 14
+                        }
+                    }
+                },
+                tooltip: {
+                    backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                    titleFont: {
+                        family: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
+                        size: 16
+                    },
+                    bodyFont: {
+                        family: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
+                        size: 14
+                    },
+                    padding: 12,
+                    cornerRadius: 10,
+                    caretSize: 8
+                }
+            },
+            scales: graphType !== 'pie' && graphType !== 'doughnut' ? {
+                y: {
+                    beginAtZero: true,
+                    grid: {
+                        color: 'rgba(0, 0, 0, 0.05)',
+                        lineWidth: 1
+                    },
+                    ticks: {
+                        font: {
+                            family: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif"
+                        }
+                    }
+                },
+                x: {
+                    grid: {
+                        color: 'rgba(0, 0, 0, 0.05)',
+                        lineWidth: 1
+                    },
+                    ticks: {
+                        font: {
+                            family: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif"
+                        }
+                    }
+                }
+            } : {}
+        }
+    };
+
+    chartInstance = new Chart(ctx, config);
+}
+
+// NEW CHART FUNCTIONS
+
+// Radar Chart Function
+function createRadarChart(data, labelKey, valueKey, chartId) {
+    // Get unique categories for radar
+    const categories = [...new Set(data.map(item => item[labelKey]))];
+    
+    // Process data for radar format
+    const datasets = [];
+    const uniqueDataPoints = [...new Set(data.map(item => item[valueKey]))];
+    
+    // If we have multiple data points, group them
+    if (uniqueDataPoints.length > 1) {
+        // Create dataset for each unique value
+        const dataByCategory = {};
+        categories.forEach(category => {
+            dataByCategory[category] = data
+                .filter(item => item[labelKey] === category)
+                .map(item => parseFloat(item[valueKey]));
+        });
+        
+        const { colors, backgroundColors } = generateColors(categories.length);
+        
+        // Create a single dataset with all values
+        datasets.push({
+            label: valueKey,
+            data: categories.map(category => {
+                const values = dataByCategory[category];
+                return values.length > 0 ? values.reduce((sum, val) => sum + val, 0) / values.length : 0;
+            }),
+            backgroundColor: backgroundColors[0],
+            borderColor: colors[0],
+            borderWidth: 2,
+            pointBackgroundColor: colors,
+            pointBorderColor: '#fff',
+            pointHoverRadius: 8
+        });
+    } else {
+        // For single data points per category
+        const { colors, backgroundColors } = generateColors(1);
+        datasets.push({
+            label: valueKey,
+            data: categories.map(category => {
+                const match = data.find(item => item[labelKey] === category);
+                return match ? parseFloat(match[valueKey]) : 0;
+            }),
+            backgroundColor: backgroundColors[0],
+            borderColor: colors[0],
+            borderWidth: 2,
+            pointBackgroundColor: colors[0],
+            pointBorderColor: '#fff',
+            pointHoverRadius: 8
+        });
+    }
+    
+    const ctx = document.getElementById(chartId).getContext("2d");
+    
+    return new Chart(ctx, {
+        type: 'radar',
+        data: {
+            labels: categories,
+            datasets: datasets
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    labels: {
+                        font: {
+                            family: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
+                            size: 14
+                        }
+                    }
+                },
+                tooltip: {
+                    backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                    titleFont: {
+                        family: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
+                        size: 16
+                    },
+                    bodyFont: {
+                        family: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
+                        size: 14
+                    }
+                }
+            },
+            scales: {
+                r: {
+                    angleLines: {
+                        display: true
+                    },
+                    suggestedMin: 0,
+                    ticks: {
+                        font: {
+                            family: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif"
+                        }
+                    }
+                }
+            }
+        }
+    });
+}
+
+// Scatter Plot with Trendline Function
+function createScatterPlotWithTrendline(xData, yData, chartId, xLabel = 'X Axis', yLabel = 'Y Axis') {
+    const ctx = document.getElementById(chartId).getContext("2d");
+    
+    // Calculate trendline
+    const n = xData.length;
+    let sumX = 0, sumY = 0, sumXY = 0, sumX2 = 0;
+    
+    for (let i = 0; i < n; i++) {
+        sumX += xData[i];
+        sumY += yData[i];
+        sumXY += xData[i] * yData[i];
+        sumX2 += xData[i] * xData[i];
+    }
+    
+    const slope = (n * sumXY - sumX * sumY) / (n * sumX2 - sumX * sumX);
+    const intercept = (sumY - slope * sumX) / n;
+    
+    // Create trendline data points
+    const minX = Math.min(...xData);
+    const maxX = Math.max(...xData);
+    const trendlineX = [minX, maxX];
+    const trendlineY = trendlineX.map(x => slope * x + intercept);
+    
+    // Generate nice colors
+    const { colors, backgroundColors } = generateColors(2);
+    
+    // Create scatter plot with trendline
+    return new Chart(ctx, {
+        type: 'scatter',
+        data: {
+            datasets: [
+                {
+                    label: 'Data Points',
+                    data: xData.map((x, i) => ({ x, y: yData[i] })),
+                    backgroundColor: backgroundColors[0],
+                    borderColor: colors[0],
+                    pointRadius: 6,
+                    pointHoverRadius: 8
+                },
+                {
+                    label: 'Trendline',
+                    data: trendlineX.map((x, i) => ({ x, y: trendlineY[i] })),
+                    type: 'line',
+                    borderColor: colors[1],
+                    borderWidth: 2,
+                    fill: false,
+                    pointRadius: 0,
+                    tension: 0
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                x: {
+                    type: 'linear',
+                    position: 'bottom',
+                    title: {
+                        display: true,
+                        text: xLabel,
+                        font: {
+                            family: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
+                            size: 14
+                        }
+                    },
+                    grid: {
+                        color: 'rgba(0, 0, 0, 0.05)',
+                        lineWidth: 1
+                    }
+                },
+                y: {
+                    title: {
+                        display: true,
+                        text: yLabel,
+                        font: {
+                            family: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
+                            size: 14
+                        }
+                    },
+                    grid: {
+                        color: 'rgba(0, 0, 0, 0.05)',
+                        lineWidth: 1
+                    }
+                }
+            },
+            plugins: {
+                tooltip: {
+                    callbacks: {
+                        label: (context) => {
+                            if (context.datasetIndex === 0) {
+                                return `(${context.parsed.x.toFixed(2)}, ${context.parsed.y.toFixed(2)})`;
+                            } else {
+                                return '';
+                            }
+                        }
+                    },
+                    backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                    titleFont: {
+                        family: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
+                        size: 16
+                    },
+                    bodyFont: {
+                        family: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
+                        size: 14
+                    }
+                },
+                legend: {
+                    labels: {
+                        font: {
+                            family: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
+                            size: 14
+                        }
+                    }
+                }
+            }
+        }
+    });
+}
+
+// Helper function for colors
+function generateColors(count) {
+    const colors = [];
+    const backgroundColors = [];
+    for (let i = 0; i < count; i++) {
+        const hue = (i * 137.5) % 360; // Golden angle approximation for color distribution
+        const saturation = 70 + Math.random() * 30;
+        const lightness = 50 + Math.random() * 10;
+        const alpha = 0.7;
+        
+        colors.push(`hsl(${hue}, ${saturation}%, ${lightness}%)`);
+        backgroundColors.push(`hsla(${hue}, ${saturation}%, ${lightness}%, ${alpha})`);
+    }
+    return { colors, backgroundColors };
+}
+
+// Add some visual effects
+document.querySelectorAll('select, button').forEach(element => {
+    element.addEventListener('mouseover', function() {
+        this.style.transform = 'scale(1.05)';
+        this.style.transition = 'all 0.3s ease';
+    });
+    
+    element.addEventListener('mouseout', function() {
+        this.style.transform = 'scale(1)';
+    });
+});
+
+// Add loading animation for button
+document.querySelector('button').addEventListener('click', function() {
+    const originalText = this.textContent;
+    this.innerHTML = '<span class="loading-text">Processing...</span>';
+    
+    setTimeout(() => {
+        this.textContent = originalText;
+    }, 800);
+});
+
+document.getElementById('logoutButton').addEventListener('click', function() {
+    // Show subtle loading state
+    const button = this;
+    const originalText = button.textContent;
+    button.textContent = 'Logging out...';
+    button.disabled = true;
+    
+    // Send POST request to logout API
+    fetch('/logout', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        credentials: 'same-origin' // Include credentials for session cookies
+    })
+    .then(response => {
+        console.log('Logout response status:', response.status);
+        // Redirect regardless of the response (as long as request completes)
+        window.location.href = 'login.html';
+    })
+    .catch(error => {
+        console.error('Logout error:', error);
+        // Reset button state
+        button.textContent = originalText;
+        button.disabled = false;
+        alert('Failed to logout. Please try again.');
+    });
+});
+    </script>
+
+</body>
+
+</html>

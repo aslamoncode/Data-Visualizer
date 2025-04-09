@@ -1,0 +1,13 @@
+Date,Time,Pickup_Location,Dropoff_Location,Distance,Fare,Passenger_Count,Payment_Method
+2024-02-15,08:30,New York,Brooklyn,8.2,15.50,2,Credit Card
+2024-02-15,09:00,Manhattan,Queens,10.5,18.75,1,PayPal
+2024-02-16,12:45,Brooklyn,Staten Island,15.0,25.00,3,Cash
+2024-02-16,17:30,Queens,Bronx,12.3,22.50,2,Credit Card
+2024-02-17,21:15,Bronx,Manhattan,9.8,19.80,1,Debit Card
+2024-02-17,23:45,Manhattan,Brooklyn,6.7,14.50,3,Cash
+2024-02-18,07:15,Brooklyn,Queens,7.2,16.80,2,PayPal
+2024-02-18,10:00,Queens,New York,11.5,20.25,1,Credit Card
+2024-02-19,13:20,New York,Bronx,14.0,24.00,2,Cash
+2024-02-19,15:45,Bronx,Staten Island,16.3,30.50,4,Debit Card
+2024-02-20,18:10,Queens,Brooklyn,8.7,17.90,1,PayPal
+2024-02-20,20:30,Staten Island,New York,20.5,35.00,3,Credit Card

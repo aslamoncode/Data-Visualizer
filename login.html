@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Data Visualizer</title>
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+    <style>
+        @import url("https://fonts.googleapis.com/css?family=Poppins:200,300,400,500,600,700,800,900&display=swap");
+        @import url("https://use.fontawesome.com/releases/v6.5.1/css/all.css");
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Poppins", sans-serif;
+        }
+
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+            background-size: 400% 400%;
+            animation: gradient 10s ease infinite;
+        }
+
+        @keyframes gradient {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .box {
+            width: 400px;
+            padding: 30px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+            text-align: center;
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+            animation: fadeIn 0.8s ease-out;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .box:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(255, 255, 255, 0.4);
+        }
+
+        @keyframes fadeIn {
+            from { 
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to { 
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        h2 {
+            text-transform: uppercase;
+            font-weight: 600;
+            color: #fff;
+            position: relative;
+            margin-bottom: 20px;
+            animation: slideIn 0.6s ease;
+        }
+
+        h2:after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: -5px;
+            left: 50%;
+            background: #fff;
+            transition: 0.5s;
+        }
+
+        .box:hover h2:after {
+            width: 100px;
+            left: calc(50% - 50px);
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(-30px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            border: none;
+            border-radius: 5px;
+            outline: none;
+            transition: all 0.3s ease;
+            animation: fadeInUp 0.6s ease backwards;
+        }
+
+        input:first-of-type {
+            animation-delay: 0.2s;
+        }
+
+        input:last-of-type {
+            animation-delay: 0.4s;
+        }
+
+        input:focus {
+            box-shadow: 0 0 8px rgba(0, 115, 230, 0.6);
+            transform: scale(1.02);
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        button {
+            background: #0073e6;
+            color: white;
+            padding: 12px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            margin-top: 15px;
+            transition: 0.3s;
+            animation: fadeInUp 0.6s ease backwards;
+            animation-delay: 0.6s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        button:hover {
+            background: #005bb5;
+            transform: scale(1.05);
+        }
+
+        button:after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 5px;
+            height: 5px;
+            background: rgba(255, 255, 255, 0.5);
+            opacity: 0;
+            border-radius: 100%;
+            transform: scale(1, 1) translate(-50%);
+            transform-origin: 50% 50%;
+        }
+
+        @keyframes ripple {
+            0% {
+                transform: scale(0, 0);
+                opacity: 0.5;
+            }
+            100% {
+                transform: scale(30, 30);
+                opacity: 0;
+            }
+        }
+
+        button:focus:not(:active)::after {
+            animation: ripple 1s ease-out;
+        }
+
+        .error-message {
+            color: red;
+            font-size: 0.9rem;
+            margin-top: 5px;
+            animation: shake 0.5s ease 0s 1 normal both;
+            display: inline-block;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+            20%, 40%, 60%, 80% { transform: translateX(5px); }
+        }
+
+        a {
+            display: inline-block;
+            margin-top: 15px;
+            color: #fff;
+            text-decoration: none;
+            position: relative;
+            transition: all 0.3s ease;
+            animation: fadeInUp 0.6s ease backwards;
+            animation-delay: 0.8s;
+        }
+
+        a:after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 1px;
+            bottom: -2px;
+            left: 0;
+            background-color: #fff;
+            transition: width 0.3s;
+        }
+
+        a:hover:after {
+            width: 100%;
+        }
+
+        a:hover {
+            transform: translateY(-2px);
+            text-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
+        }
+    </style>
+</head>
+<body>
+    <div class="box">
+        <h2>Login to Data Visualizer</h2>
+        <form id="loginForm">
+            <input type="text" id="userInput" placeholder="Enter Email or Mobile Number" required>
+            <input type="password" id="passwordInput" placeholder="Enter Password" required>
+            <button type="submit">Login</button>
+            <p id="errorMessage" class="error-message"></p>
+        </form>
+        <div>
+            <a href="#">Forgot Password?</a>
+        </div>
+    </div>
+    <script>
+        document.getElementById("loginForm").addEventListener("submit", function(event) {
+            event.preventDefault();
+            const userInput = document.getElementById("userInput").value;
+            const password = document.getElementById("passwordInput").value;
+            const errorMessage = document.getElementById("errorMessage");
+            
+            if (userInput === "" || password === "") {
+                errorMessage.textContent = "All fields are required!";
+                return;
+            }
+            
+            if (!userInput.includes("@") && isNaN(userInput)) {
+                errorMessage.textContent = "Enter a valid email or mobile number!";
+                return;
+            }
+            
+            if (password.length < 6) {
+                errorMessage.textContent = "Password must be at least 6 characters!";
+                return;
+            }
+            
+            errorMessage.textContent = "";
+            
+            // Add loading animation before redirect
+            const button = document.querySelector('button');
+            button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Logging in...';
+            button.disabled = true;
+            
+            setTimeout(function() {
+                window.location.href = "index.html";
+            }, 1500); // Delay for effect
+        });
+
+        // Add ripple effect to button
+        const button = document.querySelector('button');
+        button.addEventListener('click', function(e) {
+            const ripple = document.createElement('span');
+            ripple.classList.add('ripple');
+            this.appendChild(ripple);
+            
+            const x = e.clientX - e.target.getBoundingClientRect().left;
+            const y = e.clientY - e.target.getBoundingClientRect().top;
+            
+            ripple.style.left = `${x}px`;
+            ripple.style.top = `${y}px`;
+            
+            setTimeout(() => {
+                ripple.remove();
+            }, 600);
+        });
+    </script>
+</body>
+</html>
