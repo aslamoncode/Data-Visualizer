@@ -3,8 +3,14 @@ import pandas as pd
 import json
 from pymongo import MongoClient
 from flask_cors import CORS
+
 app = Flask(__name__)
 CORS(app)  # Enable CORS for frontend communication
+
+# Root route for Render homepage
+@app.route("/")
+def home():
+    return "✅ Flask API is running!"
 
 # Connect to MongoDB
 MONGO_URI = "mongodb+srv://farhanshaik600:Farhan#1474@cluster0.gpnjw.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
@@ -20,7 +26,7 @@ datasets = {
     "netflix": "netflix.csv"
 }
 
-#Function to load CSV into MongoDB (Run once)
+# Function to load CSV into MongoDB (Run once)
 def load_csv_to_mongodb():
     for dataset_name, file_path in datasets.items():
         try:
@@ -37,7 +43,7 @@ def load_csv_to_mongodb():
             print(f"Error loading {dataset_name}: {e}")
 
 # Uncomment this and run once to load CSV into MongoDB
-#load_csv_to_mongodb()
+# load_csv_to_mongodb()
 
 # API to fetch dataset from MongoDB
 @app.route("/get_data", methods=["GET"])
