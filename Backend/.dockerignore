@@ -1,0 +1,26 @@
+# Keep the Docker build context small and fast by
+# excluding files the container never needs.
+
+# Local virtual environment — dependencies get
+# reinstalled fresh inside the container anyway
+venv313/
+venv/
+.venv/
+
+# Environment secrets — these are injected via
+# Render's dashboard at runtime, never baked into
+# the image itself (would be a security risk)
+.env
+
+# Git metadata — irrelevant inside the container
+.git/
+.gitignore
+
+# Python cache files
+__pycache__/
+*.pyc
+*.pyo
+
+# Editor/OS clutter
+.vscode/
+.DS_Store
