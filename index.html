@@ -221,30 +221,6 @@
     padding: var(--sp-6);
   }
 
-  .section{
-    margin-bottom: var(--sp-6);
-  }
-  .section:last-child{ margin-bottom:0; }
-
-  .section-label{
-    font-family: var(--font-mono);
-    font-size: 0.7rem;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: var(--text-low);
-    margin-bottom: var(--sp-4);
-    display:flex;
-    align-items:center;
-    gap: var(--sp-3);
-  }
-
-  .section-label::after{
-    content:'';
-    flex:1;
-    height:1px;
-    background: linear-gradient(to right, var(--panel-border), transparent);
-  }
-
   /* field grid */
   .field-grid{
     display:grid;
@@ -316,724 +292,103 @@
   /* button */
   .actions{
     display:flex;
+    align-items:flex-end;
     justify-content:center;
+    gap: var(--sp-4);
+    flex-wrap: wrap;
     margin: var(--sp-6) 0;
   }
 
-  button.primary{
-    font-family: var(--font-body);
-    font-weight: 700;
-    font-size: 0.92rem;
-    letter-spacing: 0.01em;
-    color: #08101f;
-    background: linear-gradient(135deg, var(--accent-2), var(--accent));
-    border: none;
-    padding: 14px 32px;
-    border-radius: 100px;
-    cursor:pointer;
-    box-shadow: 0 12px 30px -10px rgba(56, 189, 248, 0.55);
-    transition: transform 0.25s var(--ease), box-shadow 0.25s var(--ease);
+  .graph-type-field{
     min-width: 220px;
   }
 
-  button.primary:hover{
-    transform: translateY(-2px);
-    box-shadow: 0 16px 36px -10px rgba(56, 189, 248, 0.7);
-  }
-
-  button.primary:active{
-    transform: translateY(0);
-  }
-
-  /* data preview */
-  textarea{
-    width:100%;
-    height: 130px;
-    padding: var(--sp-4);
-    border-radius: var(--radius-sm);
-    border: 1px solid var(--panel-border);
-    background: rgba(0,0,0,0.25);
-    color: var(--text-mid);
-    font-family: var(--font-mono);
-    font-size: 0.78rem;
-    line-height: 1.5;
-    resize: vertical;
-  }
-
-  /* chart */
-  .chart-wrap{
-    margin-top: var(--sp-5);
-    background: rgba(255,255,255,0.03);
-    border: 1px solid var(--panel-border);
-    border-radius: var(--radius-md);
-    padding: var(--sp-5);
-  }
-
-  canvas{
-    width: 100% !important;
-    max-height: 480px;
+  .visually-hidden{
+    position:absolute !important;
+    width:1px; height:1px;
+    padding:0; margin:-1px;
+    overflow:hidden;
+    clip:rect(0,0,0,0);
+    white-space:nowrap;
+    border:0;
   }
 
   /* ============================================================
-     RESPONSIVE
+     EXAMPLES STRIP — no outer card, just a straight line
      ============================================================ */
-  @media (max-width: 640px){
-    .page{ padding: var(--sp-5) var(--sp-3) var(--sp-7); }
-    .panel{ padding: var(--sp-4); border-radius: var(--radius-md); }
-    .field-grid{ grid-template-columns: 1fr; }
-    button.primary{ width:100%; }
-    h1{ font-size: 1.8rem; }
-  }
-</style>
-</head>
-
-<body>
-
-  <div class="aurora" aria-hidden="true">
-    <div class="aurora__blob aurora__blob--1"></div>
-    <div class="aurora__blob aurora__blob--2"></div>
-    <div class="aurora__blob aurora__blob--3"></div>
-    <div class="aurora__blob aurora__blob--4"></div>
-    <div class="aurora__grain"></div>
-  </div>
-
-  <div class="page">
-    <header class="hero">
-      <span class="eyebrow">Live · MongoDB Atlas</span>
-      <h1>Data Visualizer</h1>
-      <p class="subtitle">Pick a dataset or drop in a CSV, choose your axes, and render a chart in seconds.</p>
-    </header>
-
-    <main class="panel">
-
-      <section class="section">
-        <div class="section-label">Source</div>
-        <div class="field-grid">
-          <div class="field">
-            <label for="datasetSelect">Dataset</label>
-            <select id="datasetSelect" onchange="fetchData(this.value)">
-              <option value="">— Select —</option>
-              <option value="Spotify">Spotify</option>
-              <option value="Uber">Uber</option>
-              <option value="Amazon">Amazon</option>
-              <option value="netflix">Netflix</option>
-            </select>
-          </div>
-          <div class="field">
-            <label for="fileInput">Or upload CSV</label>
-            <input type="file" id="fileInput" accept=".csv" onchange="handleFileUpload(event)">
-          </div>
-        </div>
-      </section>
-
-      <section class="section">
-        <div class="section-label">Chart setup</div>
-        <div class="field-grid">
-          <div class="field">
-            <label for="xAxisSelect">X-Axis</label>
-            <select id="xAxisSelect"></select>
-          </div>
-          <div class="field">
-            <label for="yAxisSelect">Y-Axis</label>
-            <select id="yAxisSelect"></select>
-          </div>
-          <div class="field">
-            <label for="graphTypeSelect">Graph type</label>
-            <select id="graphTypeSelect">
-              <option value="bar">Bar</option>
-              <option value="line">Line</option>
-              <option value="pie">Pie</option>
-              <option value="doughnut">Doughnut</option>
-              <option value="radar">Radar</option>
-              <option value="scatterTrendline">Scatter + Trendline</option>
-            </select>
-          </div>
-        </div>
-      </section>
-
-      <div class="actions">
-        <button class="primary" onclick="updateGraph()">Generate graph</button>
-      </div>
-
-      <section class="section">
-        <div class="section-label">Data preview</div>
-        <textarea id="dataTextArea" readonly placeholder="Data will appear here once you select a dataset or upload a CSV…"></textarea>
-      </section>
-
-      <div class="chart-wrap">
-        <canvas id="myChart"></canvas>
-      </div>
-
-    </main>
-  </div>
-
-  <script>
-    const API_BASE_URL = "https://data-visualizer-587i.onrender.com";
-    let chartInstance = null;
-
-    async function fetchData(datasetName) {
-      if (!datasetName) return;
-      try {
-        const response = await fetch(`${API_BASE_URL}/get_data?dataset=${datasetName}`);
-        const result = await response.json();
-        if (result.error) { alert("Error: " + result.error); return; }
-        handleData(result.data);
-      } catch (error) {
-        console.error("Error fetching data:", error);
-        alert("Failed to fetch data.");
-      }
-    }
-
-    function handleFileUpload(event) {
-      const file = event.target.files[0];
-      if (!file) return;
-      const reader = new FileReader();
-      reader.onload = (e) => handleData(parseCSV(e.target.result));
-      reader.readAsText(file);
-    }
-
-    function parseCSV(csv) {
-      const lines = csv.trim().split("\n");
-      const headers = lines[0].split(",");
-      return lines.slice(1).map(line => {
-        const values = line.split(",");
-        let obj = {};
-        headers.forEach((header, index) => {
-          obj[header.trim()] = isNaN(values[index]) ? values[index].trim() : parseFloat(values[index]);
-        });
-        return obj;
-      });
-    }
-
-    function handleData(data) {
-      document.getElementById("dataTextArea").value = data.map(row => JSON.stringify(row)).join("\n");
-
-      if (data.length > 0) {
-        const keys = Object.keys(data[0]);
-        const xDropdown = document.getElementById("xAxisSelect");
-        const yDropdown = document.getElementById("yAxisSelect");
-        xDropdown.innerHTML = "";
-        yDropdown.innerHTML = "";
-        keys.forEach(key => {
-          xDropdown.add(new Option(key, key));
-          yDropdown.add(new Option(key, key));
-        });
-        generateGraph(data, keys[0], keys[1], "bar");
-      }
-    }
-
-    function updateGraph() {
-      const xAxis = document.getElementById("xAxisSelect").value;
-      const yAxis = document.getElementById("yAxisSelect").value;
-      const graphType = document.getElementById("graphTypeSelect").value;
-      if (!xAxis || !yAxis) { alert("Please select both X-Axis and Y-Axis."); return; }
-      const rawData = document.getElementById("dataTextArea").value;
-      if (!rawData.trim()) { alert("Load a dataset or CSV first."); return; }
-      const data = rawData.split("\n").map(row => JSON.parse(row));
-      generateGraph(data, xAxis, yAxis, graphType);
-    }
-
-    function generateGraph(data, xAxis, yAxis, graphType) {
-      const labels = data.map(row => row[xAxis]);
-      const values = data.map(row => parseFloat(row[yAxis]));
-      const { colors, backgroundColors } = generateColors(labels.length);
-      const ctx = document.getElementById("myChart").getContext("2d");
-
-      if (chartInstance) chartInstance.destroy();
-
-      if (graphType === "radar") {
-        chartInstance = createRadarChart(data, xAxis, yAxis, "myChart");
-        return;
-      } else if (graphType === "scatterTrendline") {
-        chartInstance = createScatterPlotWithTrendline(
-          data.map(item => parseFloat(item[xAxis])),
-          data.map(item => parseFloat(item[yAxis])),
-          "myChart", xAxis, yAxis
-        );
-        return;
-      }
-
-      const textMid = '#aab3c5';
-      const gridColor = 'rgba(148,163,184,0.12)';
-
-      const config = {
-        type: graphType,
-        data: {
-          labels: labels,
-          datasets: [{
-            label: `${yAxis} vs ${xAxis}`,
-            data: values,
-            backgroundColor: graphType === 'line' ? 'rgba(56, 189, 248, 0.18)' : backgroundColors,
-            borderColor: graphType === 'line' ? '#38bdf8' : colors,
-            borderWidth: 2,
-            pointBackgroundColor: colors,
-            pointBorderColor: '#0a0e1a',
-            pointHoverRadius: 7,
-            tension: 0.4,
-          }]
-        },
-        options: {
-          responsive: true,
-          animation: { duration: 900, easing: 'easeOutQuart' },
-          plugins: {
-            legend: { labels: { color: textMid, font: { family: "'Inter', sans-serif", size: 13 } } },
-            tooltip: {
-              backgroundColor: 'rgba(10,14,26,0.95)',
-              borderColor: 'rgba(148,163,184,0.2)',
-              borderWidth: 1,
-              titleFont: { family: "'Space Grotesk', sans-serif", size: 14 },
-              bodyFont: { family: "'Inter', sans-serif", size: 13 },
-              padding: 12,
-              cornerRadius: 10
-            }
-          },
-          scales: graphType !== 'pie' && graphType !== 'doughnut' ? {
-            y: { beginAtZero: true, grid: { color: gridColor }, ticks: { color: textMid, font: { family: "'Inter', sans-serif" } } },
-            x: { grid: { color: gridColor }, ticks: { color: textMid, font: { family: "'Inter', sans-serif" } } }
-          } : {}
-        }
-      };
-
-      chartInstance = new Chart(ctx, config);
-    }
-
-    function createRadarChart(data, labelKey, valueKey, chartId) {
-      const categories = [...new Set(data.map(item => item[labelKey]))];
-      const datasets = [];
-      const uniqueDataPoints = [...new Set(data.map(item => item[valueKey]))];
-      const textMid = '#aab3c5';
-
-      if (uniqueDataPoints.length > 1) {
-        const dataByCategory = {};
-        categories.forEach(category => {
-          dataByCategory[category] = data.filter(item => item[labelKey] === category).map(item => parseFloat(item[valueKey]));
-        });
-        const { colors, backgroundColors } = generateColors(categories.length);
-        datasets.push({
-          label: valueKey,
-          data: categories.map(category => {
-            const values = dataByCategory[category];
-            return values.length > 0 ? values.reduce((sum, val) => sum + val, 0) / values.length : 0;
-          }),
-          backgroundColor: backgroundColors[0], borderColor: colors[0], borderWidth: 2,
-          pointBackgroundColor: colors, pointBorderColor: '#0a0e1a', pointHoverRadius: 7
-        });
-      } else {
-        const { colors, backgroundColors } = generateColors(1);
-        datasets.push({
-          label: valueKey,
-          data: categories.map(category => {
-            const match = data.find(item => item[labelKey] === category);
-            return match ? parseFloat(match[valueKey]) : 0;
-          }),
-          backgroundColor: backgroundColors[0], borderColor: colors[0], borderWidth: 2,
-          pointBackgroundColor: colors[0], pointBorderColor: '#0a0e1a', pointHoverRadius: 7
-        });
-      }
-
-      const ctx = document.getElementById(chartId).getContext("2d");
-      return new Chart(ctx, {
-        type: 'radar',
-        data: { labels: categories, datasets },
-        options: {
-          responsive: true, maintainAspectRatio: false,
-          plugins: {
-            legend: { labels: { color: textMid, font: { family: "'Inter', sans-serif", size: 13 } } },
-            tooltip: { backgroundColor: 'rgba(10,14,26,0.95)', titleFont: { family: "'Space Grotesk', sans-serif", size: 14 }, bodyFont: { family: "'Inter', sans-serif", size: 13 } }
-          },
-          scales: {
-            r: {
-              angleLines: { color: 'rgba(148,163,184,0.15)' },
-              grid: { color: 'rgba(148,163,184,0.15)' },
-              pointLabels: { color: textMid },
-              suggestedMin: 0,
-              ticks: { color: textMid, backdropColor: 'transparent', font: { family: "'Inter', sans-serif" } }
-            }
-          }
-        }
-      });
-    }
-
-    function createScatterPlotWithTrendline(xData, yData, chartId, xLabel = 'X Axis', yLabel = 'Y Axis') {
-      const ctx = document.getElementById(chartId).getContext("2d");
-      const n = xData.length;
-      let sumX = 0, sumY = 0, sumXY = 0, sumX2 = 0;
-      for (let i = 0; i < n; i++) {
-        sumX += xData[i]; sumY += yData[i]; sumXY += xData[i] * yData[i]; sumX2 += xData[i] * xData[i];
-      }
-      const slope = (n * sumXY - sumX * sumY) / (n * sumX2 - sumX * sumX);
-      const intercept = (sumY - slope * sumX) / n;
-      const minX = Math.min(...xData);
-      const maxX = Math.max(...xData);
-      const trendlineX = [minX, maxX];
-      const trendlineY = trendlineX.map(x => slope * x + intercept);
-      const { colors, backgroundColors } = generateColors(2);
-      const textMid = '#aab3c5';
-      const gridColor = 'rgba(148,163,184,0.12)';
-
-      return new Chart(ctx, {
-        type: 'scatter',
-        data: {
-          datasets: [
-            { label: 'Data Points', data: xData.map((x, i) => ({ x, y: yData[i] })), backgroundColor: backgroundColors[0], borderColor: colors[0], pointRadius: 6, pointHoverRadius: 8 },
-            { label: 'Trendline', data: trendlineX.map((x, i) => ({ x, y: trendlineY[i] })), type: 'line', borderColor: colors[1], borderWidth: 2, fill: false, pointRadius: 0, tension: 0 }
-          ]
-        },
-        options: {
-          responsive: true, maintainAspectRatio: false,
-          scales: {
-            x: { type: 'linear', position: 'bottom', title: { display: true, text: xLabel, color: textMid, font: { family: "'Inter', sans-serif", size: 13 } }, grid: { color: gridColor }, ticks: { color: textMid } },
-            y: { title: { display: true, text: yLabel, color: textMid, font: { family: "'Inter', sans-serif", size: 13 } }, grid: { color: gridColor }, ticks: { color: textMid } }
-          },
-          plugins: {
-            tooltip: {
-              callbacks: { label: (context) => context.datasetIndex === 0 ? `(${context.parsed.x.toFixed(2)}, ${context.parsed.y.toFixed(2)})` : '' },
-              backgroundColor: 'rgba(10,14,26,0.95)', titleFont: { family: "'Space Grotesk', sans-serif", size: 14 }, bodyFont: { family: "'Inter', sans-serif", size: 13 }
-            },
-            legend: { labels: { color: textMid, font: { family: "'Inter', sans-serif", size: 13 } } }
-          }
-        }
-      });
-    }
-
-    // Single-hue palette: same hue as the aurora (--hue: 199), varying only
-    // lightness/saturation so multi-series charts stay monochrome, not rainbow.
-    function generateColors(count) {
-      const HUE = 199;
-      const colors = [];
-      const backgroundColors = [];
-      for (let i = 0; i < count; i++) {
-        const step = count > 1 ? i / (count - 1) : 0; // 0 → 1
-        const lightness = 38 + step * 40;   // 38% (deep) → 78% (pale), same hue
-        const saturation = 75 - step * 15;  // slightly desaturate as it lightens
-        colors.push(`hsl(${HUE}, ${saturation}%, ${lightness}%)`);
-        backgroundColors.push(`hsla(${HUE}, ${saturation}%, ${lightness}%, 0.55)`);
-      }
-      return { colors, backgroundColors };
-    }
-  </script>
-
-</body>
-</html><!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Data Visualizer</title>
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-<style>
-  /* ============================================================
-     TOKENS
-     ============================================================ */
-  :root{
-    /* aurora surface */
-    --bg-base:      #0a0e1a;
-    --bg-base-2:    #0c1224;
-    --panel:        rgba(18, 24, 44, 0.62);
-    --panel-border: rgba(148, 163, 184, 0.14);
-    --panel-hi:     rgba(255, 255, 255, 0.04);
-
-    /* aurora — single hue, varying tint/shade */
-    --hue: 199; /* cyan-blue */
-    --aurora-1: hsl(var(--hue) 90% 55%);
-    --aurora-2: hsl(var(--hue) 80% 65%);
-    --aurora-3: hsl(var(--hue) 70% 45%);
-    --aurora-4: hsl(var(--hue) 60% 75%);
-
-    /* text */
-    --text-hi:    #eef1f8;
-    --text-mid:   #aab3c5;
-    --text-low:   #6b7488;
-
-    /* accents for UI — same single hue */
-    --accent:        hsl(var(--hue) 90% 58%);
-    --accent-2:      hsl(var(--hue) 85% 68%);
-    --accent-strong: hsl(var(--hue) 75% 48%);
-    --danger:        #f0576b;
-
-    /* spacing scale */
-    --sp-1: 4px;
-    --sp-2: 8px;
-    --sp-3: 12px;
-    --sp-4: 16px;
-    --sp-5: 24px;
-    --sp-6: 32px;
-    --sp-7: 48px;
-    --sp-8: 64px;
-
-    --radius-sm: 10px;
-    --radius-md: 16px;
-    --radius-lg: 22px;
-
-    --font-display: 'Space Grotesk', sans-serif;
-    --font-body: 'Inter', sans-serif;
-    --font-mono: 'JetBrains Mono', monospace;
-
-    --ease: cubic-bezier(0.22, 1, 0.36, 1);
+  .examples-strip{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap: var(--sp-5);
   }
 
-  *{ margin:0; padding:0; box-sizing:border-box; }
-
-  html{ scroll-behavior:smooth; }
-
-  body{
-    font-family: var(--font-body);
-    background: var(--bg-base);
+  .examples-heading{
+    font-family: var(--font-display);
+    font-size: 1.4rem;
+    font-weight: 700;
     color: var(--text-hi);
-    min-height:100vh;
-    -webkit-font-smoothing: antialiased;
+    text-align:center;
   }
 
-  /* ============================================================
-     AURORA BACKGROUND
-     Fixed layer, animated only via transform/opacity (GPU-composited,
-     no layout/paint cost on scroll — this is what fixes the jank).
-     ============================================================ */
-  .aurora{
-    position: fixed;
-    inset: 0;
-    z-index: -1;
+  .marquee{
+    width: 100%;
     overflow: hidden;
-    background:
-      radial-gradient(ellipse at 20% 10%, var(--bg-base-2), transparent 60%),
-      var(--bg-base);
+    -webkit-mask-image: linear-gradient(to right, transparent, black 8%, black 92%, transparent);
+    mask-image: linear-gradient(to right, transparent, black 8%, black 92%, transparent);
   }
 
-  .aurora__blob{
-    position: absolute;
-    width: 60vw;
-    height: 60vw;
-    max-width: 720px;
-    max-height: 720px;
-    border-radius: 50%;
-    filter: blur(90px);
-    opacity: 0.35;
+  .marquee__track{
+    display:flex;
+    gap: var(--sp-4);
+    width: max-content;
+    animation: marquee-scroll 28s linear infinite;
     will-change: transform;
   }
 
-  .aurora__blob--1{
-    top: -10%; left: -10%;
-    background: var(--aurora-1);
-    animation: drift1 26s var(--ease) infinite;
-  }
-  .aurora__blob--2{
-    top: 10%; right: -15%;
-    background: var(--aurora-2);
-    opacity: 0.28;
-    animation: drift2 32s var(--ease) infinite;
-  }
-  .aurora__blob--3{
-    bottom: -20%; left: 20%;
-    background: var(--aurora-3);
-    opacity: 0.3;
-    animation: drift3 40s var(--ease) infinite;
-  }
-  .aurora__blob--4{
-    bottom: -10%; right: 5%;
-    width: 40vw; height: 40vw;
-    background: var(--aurora-4);
-    opacity: 0.14;
-    animation: drift1 34s var(--ease) infinite reverse;
+  .marquee:hover .marquee__track{
+    animation-play-state: paused;
   }
 
-  @keyframes drift1{
-    0%,100% { transform: translate(0,0) scale(1); }
-    50%     { transform: translate(6%, 8%) scale(1.08); }
-  }
-  @keyframes drift2{
-    0%,100% { transform: translate(0,0) scale(1); }
-    50%     { transform: translate(-8%, 6%) scale(0.95); }
-  }
-  @keyframes drift3{
-    0%,100% { transform: translate(0,0) scale(1); }
-    50%     { transform: translate(5%, -6%) scale(1.05); }
+  @keyframes marquee-scroll{
+    from{ transform: translateX(0); }
+    to{ transform: translateX(-50%); }
   }
 
-  .aurora__grain{
-    position:absolute; inset:0;
-    background-image: radial-gradient(rgba(255,255,255,0.025) 1px, transparent 1px);
-    background-size: 3px 3px;
-    mix-blend-mode: overlay;
+  .chip{
+    flex: 0 0 auto;
+    width: 168px;
+    padding: var(--sp-4);
+    background: hsla(var(--hue), 70%, 55%, 0.1);
+    border: 1px solid hsla(var(--hue), 85%, 65%, 0.35);
+    border-radius: var(--radius-sm);
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap: var(--sp-3);
+    text-align:center;
+    box-shadow: 0 8px 24px -12px hsla(var(--hue), 90%, 55%, 0.5);
+    transition: transform 0.25s var(--ease), box-shadow 0.25s var(--ease);
+  }
+
+  .chip:hover{
+    transform: translateY(-3px);
+    box-shadow: 0 14px 30px -12px hsla(var(--hue), 90%, 55%, 0.7);
+  }
+
+  .chip svg{
+    width: 56px;
+    height: 56px;
+  }
+
+  .chip span{
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--text-hi);
   }
 
   @media (prefers-reduced-motion: reduce){
-    .aurora__blob{ animation: none; }
-    html{ scroll-behavior:auto; }
-  }
-
-  /* ============================================================
-     LAYOUT
-     ============================================================ */
-  .page{
-    max-width: 880px;
-    margin: 0 auto;
-    padding: var(--sp-7) var(--sp-4) var(--sp-8);
-  }
-
-  header.hero{
-    text-align:center;
-    margin-bottom: var(--sp-6);
-  }
-
-  .eyebrow{
-    display:inline-flex;
-    align-items:center;
-    gap: var(--sp-2);
-    font-family: var(--font-mono);
-    font-size: 0.72rem;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    color: var(--accent-2);
-    background: rgba(45, 212, 191, 0.08);
-    border: 1px solid rgba(45, 212, 191, 0.25);
-    padding: var(--sp-1) var(--sp-3);
-    border-radius: 100px;
-    margin-bottom: var(--sp-4);
-  }
-
-  .eyebrow::before{
-    content:'';
-    width:6px; height:6px;
-    border-radius:50%;
-    background: var(--accent-2);
-    box-shadow: 0 0 8px var(--accent-2);
-  }
-
-  h1{
-    font-family: var(--font-display);
-    font-weight: 700;
-    font-size: clamp(2.1rem, 5vw, 3rem);
-    letter-spacing: -0.02em;
-    line-height: 1.1;
-    background: linear-gradient(135deg, #ffffff 30%, #b9c2d6 100%);
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
-  }
-
-  .subtitle{
-    margin-top: var(--sp-3);
-    color: var(--text-mid);
-    font-size: 1rem;
-    max-width: 46ch;
-    margin-inline: auto;
-  }
-
-  /* ============================================================
-     PANEL / CARD
-     ============================================================ */
-  .panel{
-    background: var(--panel);
-    border: 1px solid var(--panel-border);
-    border-radius: var(--radius-lg);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    box-shadow:
-      0 1px 0 var(--panel-hi) inset,
-      0 30px 60px -20px rgba(0,0,0,0.5);
-    padding: var(--sp-6);
-  }
-
-  .section{
-    margin-bottom: var(--sp-6);
-  }
-  .section:last-child{ margin-bottom:0; }
-
-  .section-label{
-    font-family: var(--font-mono);
-    font-size: 0.7rem;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: var(--text-low);
-    margin-bottom: var(--sp-4);
-    display:flex;
-    align-items:center;
-    gap: var(--sp-3);
-  }
-
-  .section-label::after{
-    content:'';
-    flex:1;
-    height:1px;
-    background: linear-gradient(to right, var(--panel-border), transparent);
-  }
-
-  /* field grid */
-  .field-grid{
-    display:grid;
-    grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
-    gap: var(--sp-4);
-  }
-
-  .field{
-    display:flex;
-    flex-direction:column;
-    gap: var(--sp-2);
-  }
-
-  label{
-    font-size: 0.8rem;
-    font-weight: 600;
-    color: var(--text-mid);
-  }
-
-  select,
-  input[type="file"]{
-    width:100%;
-    padding: 11px var(--sp-4);
-    border-radius: var(--radius-sm);
-    border: 1px solid var(--panel-border);
-    background: rgba(255,255,255,0.03);
-    color: var(--text-hi);
-    font-family: var(--font-body);
-    font-size: 0.92rem;
-    transition: border-color 0.2s var(--ease), background 0.2s var(--ease);
-    cursor:pointer;
-  }
-
-  select:hover, input[type="file"]:hover{
-    border-color: rgba(148,163,184,0.32);
-    background: rgba(255,255,255,0.05);
-  }
-
-  select:focus-visible, input[type="file"]:focus-visible,
-  button:focus-visible, textarea:focus-visible{
-    outline: 2px solid var(--accent);
-    outline-offset: 2px;
-  }
-
-  input[type="file"]{
-    border-style: dashed;
-  }
-
-  input[type="file"]::file-selector-button{
-    padding: 6px 14px;
-    margin-right: var(--sp-3);
-    border: none;
-    border-radius: 100px;
-    background: var(--accent-strong);
-    color: #fff;
-    font-size: 0.8rem;
-    font-weight:600;
-    cursor:pointer;
-    transition: transform 0.2s var(--ease), background 0.2s var(--ease);
-  }
-
-  input[type="file"]::file-selector-button:hover{
-    background: var(--accent-2);
-    transform: translateY(-1px);
-  }
-
-  select option{ background: #12182c; color: var(--text-hi); }
-
-  /* button */
-  .actions{
-    display:flex;
-    justify-content:center;
-    margin: var(--sp-6) 0;
+    .marquee__track{ animation: none; }
   }
 
   button.primary{
@@ -1091,12 +446,64 @@
   }
 
   /* ============================================================
+     SEPARATE CARDS LAYOUT
+     ============================================================ */
+  .stack{
+    display:flex;
+    flex-direction:column;
+    gap: var(--sp-5);
+  }
+
+  .cards-grid{
+    display:grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: var(--sp-5);
+    align-items: stretch;
+  }
+
+  .card{
+    display:flex;
+    flex-direction:column;
+  }
+
+  .card .field-grid{
+    flex:1;
+    align-content:center;
+  }
+
+  .card-title{
+    display:flex;
+    flex-direction: column;
+    align-items:center;
+    text-align:center;
+    gap: var(--sp-2);
+    margin-bottom: var(--sp-5);
+    padding-bottom: var(--sp-4);
+    border-bottom: 1px solid var(--panel-border);
+  }
+
+  .card-title h2{
+    font-family: var(--font-display);
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--text-hi);
+    letter-spacing: -0.01em;
+  }
+
+  .card-desc{
+    font-size: 0.95rem;
+    color: var(--text-mid);
+    max-width: 34ch;
+  }
+
+  /* ============================================================
      RESPONSIVE
      ============================================================ */
   @media (max-width: 640px){
     .page{ padding: var(--sp-5) var(--sp-3) var(--sp-7); }
     .panel{ padding: var(--sp-4); border-radius: var(--radius-md); }
     .field-grid{ grid-template-columns: 1fr; }
+    .cards-grid{ grid-template-columns: 1fr; }
     button.primary{ width:100%; }
     h1{ font-size: 1.8rem; }
   }
@@ -1120,65 +527,82 @@
       <p class="subtitle">Pick a dataset or drop in a CSV, choose your axes, and render a chart in seconds.</p>
     </header>
 
-    <main class="panel">
+    <main class="stack">
 
-      <section class="section">
-        <div class="section-label">Source</div>
-        <div class="field-grid">
-          <div class="field">
-            <label for="datasetSelect">Dataset</label>
-            <select id="datasetSelect" onchange="fetchData(this.value)">
-              <option value="">— Select —</option>
-              <option value="Spotify">Spotify</option>
-              <option value="Uber">Uber</option>
-              <option value="Amazon">Amazon</option>
-              <option value="netflix">Netflix</option>
-            </select>
+      <div class="cards-grid">
+        <section class="panel card">
+          <div class="card-title">
+            <h2>Source</h2>
+            <p class="card-desc">Bring your data — pick a dataset or drop in a CSV.</p>
           </div>
-          <div class="field">
-            <label for="fileInput">Or upload CSV</label>
-            <input type="file" id="fileInput" accept=".csv" onchange="handleFileUpload(event)">
+          <div class="field-grid">
+            <div class="field">
+              <label for="datasetSelect">Dataset</label>
+              <select id="datasetSelect" onchange="fetchData(this.value)">
+                <option value="">— Select —</option>
+                <option value="Spotify">Spotify</option>
+                <option value="Uber">Uber</option>
+                <option value="Amazon">Amazon</option>
+                <option value="netflix">Netflix</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="fileInput">Or upload CSV</label>
+              <input type="file" id="fileInput" accept=".csv" onchange="handleFileUpload(event)">
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      <section class="section">
-        <div class="section-label">Chart setup</div>
-        <div class="field-grid">
-          <div class="field">
-            <label for="xAxisSelect">X-Axis</label>
-            <select id="xAxisSelect"></select>
+        <section class="panel card">
+          <div class="card-title">
+            <h2>Chart setup</h2>
+            <p class="card-desc">Tell us what to plot against what.</p>
           </div>
-          <div class="field">
-            <label for="yAxisSelect">Y-Axis</label>
-            <select id="yAxisSelect"></select>
+          <div class="field-grid">
+            <div class="field">
+              <label for="xAxisSelect">X-Axis</label>
+              <select id="xAxisSelect"></select>
+            </div>
+            <div class="field">
+              <label for="yAxisSelect">Y-Axis</label>
+              <select id="yAxisSelect"></select>
+            </div>
           </div>
-          <div class="field">
-            <label for="graphTypeSelect">Graph type</label>
-            <select id="graphTypeSelect">
-              <option value="bar">Bar</option>
-              <option value="line">Line</option>
-              <option value="pie">Pie</option>
-              <option value="doughnut">Doughnut</option>
-              <option value="radar">Radar</option>
-              <option value="scatterTrendline">Scatter + Trendline</option>
-            </select>
-          </div>
-        </div>
-      </section>
+        </section>
+      </div>
 
       <div class="actions">
+        <div class="field graph-type-field">
+          <label for="graphTypeSelect">Graph type</label>
+          <select id="graphTypeSelect">
+            <option value="bar">Bar</option>
+            <option value="line">Line</option>
+            <option value="pie">Pie</option>
+            <option value="doughnut">Doughnut</option>
+            <option value="radar">Radar</option>
+            <option value="scatterTrendline">Scatter + Trendline</option>
+          </select>
+        </div>
         <button class="primary" onclick="updateGraph()">Generate graph</button>
       </div>
 
-      <section class="section">
-        <div class="section-label">Data preview</div>
-        <textarea id="dataTextArea" readonly placeholder="Data will appear here once you select a dataset or upload a CSV…"></textarea>
-      </section>
-
-      <div class="chart-wrap">
-        <canvas id="myChart"></canvas>
+      <div class="examples-strip">
+        <p class="examples-heading">Six ways to see your data</p>
+        <div class="marquee">
+          <div class="marquee__track" id="marqueeTrack"></div>
+        </div>
+        <textarea id="dataTextArea" readonly class="visually-hidden" aria-hidden="true" tabindex="-1"></textarea>
       </div>
+
+      <section class="panel card" id="chartCard">
+        <div class="card-title">
+          <h2>Chart</h2>
+          <p class="card-desc">Your rendered graph, live.</p>
+        </div>
+        <div class="chart-wrap">
+          <canvas id="myChart"></canvas>
+        </div>
+      </section>
 
     </main>
   </div>
@@ -1247,6 +671,7 @@
       if (!rawData.trim()) { alert("Load a dataset or CSV first."); return; }
       const data = rawData.split("\n").map(row => JSON.parse(row));
       generateGraph(data, xAxis, yAxis, graphType);
+      document.getElementById("chartCard").scrollIntoView({ behavior: "smooth", block: "start" });
     }
 
     function generateGraph(data, xAxis, yAxis, graphType) {
@@ -1427,6 +852,34 @@
       }
       return { colors, backgroundColors };
     }
+
+    // ============================================================
+    // Examples marquee — small illustrative previews of each chart
+    // type, duplicated once so the loop is seamless (translateX -50%).
+    // ============================================================
+    (function buildMarquee(){
+      const c1 = 'hsl(199, 95%, 58%)';
+      const c2 = 'hsl(199, 90%, 78%)';
+      const c3 = 'hsl(199, 85%, 38%)';
+
+      const icons = [
+        { name: 'Bar', svg: `<svg viewBox="0 0 56 56"><rect x="6" y="26" width="9" height="22" rx="2" fill="${c3}"/><rect x="20" y="14" width="9" height="34" rx="2" fill="${c1}"/><rect x="34" y="20" width="9" height="28" rx="2" fill="${c2}"/><rect x="48" y="8" width="0" height="0"/></svg>` },
+        { name: 'Line', svg: `<svg viewBox="0 0 56 56"><polyline points="4,44 18,28 30,36 44,12 52,20" fill="none" stroke="${c1}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><circle cx="18" cy="28" r="3" fill="${c2}"/><circle cx="44" cy="12" r="3" fill="${c2}"/></svg>` },
+        { name: 'Pie', svg: `<svg viewBox="0 0 56 56"><circle cx="28" cy="28" r="20" fill="${c3}"/><path d="M28 28 L28 8 A20 20 0 0 1 45 38 Z" fill="${c1}"/><path d="M28 28 L45 38 A20 20 0 0 1 20 47 Z" fill="${c2}"/></svg>` },
+        { name: 'Doughnut', svg: `<svg viewBox="0 0 56 56"><circle cx="28" cy="28" r="20" fill="none" stroke="${c3}" stroke-width="9"/><path d="M28 8 A20 20 0 0 1 45 38" fill="none" stroke="${c1}" stroke-width="9"/><path d="M45 38 A20 20 0 0 1 20 47" fill="none" stroke="${c2}" stroke-width="9"/></svg>` },
+        { name: 'Radar', svg: `<svg viewBox="0 0 56 56"><polygon points="28,6 48,22 40,48 16,48 8,22" fill="none" stroke="${c3}" stroke-width="1.5"/><polygon points="28,16 40,26 36,42 20,42 16,26" fill="${c1}" fill-opacity="0.55" stroke="${c1}" stroke-width="2"/></svg>` },
+        { name: 'Scatter', svg: `<svg viewBox="0 0 56 56"><circle cx="10" cy="40" r="3" fill="${c1}"/><circle cx="20" cy="30" r="3" fill="${c2}"/><circle cx="30" cy="34" r="3" fill="${c1}"/><circle cx="38" cy="18" r="3" fill="${c2}"/><circle cx="48" cy="12" r="3" fill="${c1}"/><line x1="6" y1="44" x2="50" y2="10" stroke="${c3}" stroke-width="1.5" stroke-dasharray="3 3"/></svg>` }
+      ];
+
+      const track = document.getElementById('marqueeTrack');
+      if (!track) return;
+
+      const renderChip = (icon) => `<div class="chip">${icon.svg}<span>${icon.name}</span></div>`;
+
+      // Duplicate the set so translateX(-50%) loops seamlessly.
+      const markup = icons.map(renderChip).join('') + icons.map(renderChip).join('');
+      track.innerHTML = markup;
+    })();
   </script>
 
 </body>
