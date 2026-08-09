@@ -40,6 +40,7 @@ CORS(
     origins=[
         "http://localhost:3000",
         "http://localhost:5173",
+        "http://localhost:8000",
         # Add your deployed frontend URL here once you have it, e.g.:
         # "https://your-frontend.onrender.com",
     ]
