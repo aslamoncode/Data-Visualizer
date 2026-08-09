@@ -1,0 +1,6 @@
+Order ID,Date,Product Name,Category,Price,Quantity,Total Sales,Customer Location,Payment Method
+A1001,2024-02-10,Wireless Headphones,Electronics,79.99,2,159.98,New York,Credit Card
+A1002,2024-02-11,Laptop Stand,Accessories,39.99,1,39.99,California,PayPal
+A1003,2024-02-12,Smartwatch,Fashion,129.99,1,129.99,Texas,Debit Card
+A1004,2024-02-13,4K TV,Electronics,499.99,1,499.99,Florida,Credit Card
+A1005,2024-02-14,Running Shoes,Sports,59.99,2,119.98,Illinois,Cash
