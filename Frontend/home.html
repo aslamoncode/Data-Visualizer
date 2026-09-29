@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#F7F7F2">
+  <title>CloudViz — Turn raw data into meaningful insights</title>
+  <meta name="description" content="Explore datasets, get chart recommendations, and understand your data with CloudViz.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    :root, html[data-theme="light"] {
+      color-scheme: light;
+      --bg: #F7F7F2;
+      --surface: #FFFFFF;
+      --surface-soft: #F0F3F8;
+      --text: #1F2937;
+      --muted: #64748B;
+      --border: #E2E8F0;
+      --accent: #2563EB;
+      --accent-hover: #1D4ED8;
+      --accent-contrast: #FFFFFF;
+      --chart-a: #2563EB;
+      --chart-b: #0D9488;
+      --chart-c: #F59E0B;
+      --shadow: 0 18px 50px rgba(31, 41, 55, .08);
+    }
+    html[data-theme="dark"] {
+      color-scheme: dark;
+      --bg: #1C1917;
+      --surface: #292524;
+      --surface-soft: #332F2C;
+      --text: #FAF7F2;
+      --muted: #A8A29E;
+      --border: #44403C;
+      --accent: #F59E0B;
+      --accent-hover: #FBBF24;
+      --accent-contrast: #1C1917;
+      --chart-a: #F59E0B;
+      --chart-b: #5EEAD4;
+      --chart-c: #93C5FD;
+      --shadow: 0 18px 50px rgba(0, 0, 0, .22);
+    }
+    html { scroll-behavior: smooth; scroll-padding-top: 90px; }
+    body {
+      background: var(--bg); color: var(--text);
+      font-family: "DM Sans", sans-serif; line-height: 1.65;
+      transition: background .2s ease, color .2s ease;
+    }
+    a { color: inherit; }
+    button { font: inherit; }
+    .wrap { width: min(1120px, calc(100% - 48px)); margin-inline: auto; }
+    h1, h2, h3, .wordmark { font-family: "Manrope", sans-serif; letter-spacing: -.035em; }
+    h1 { font-size: clamp(2.7rem, 6vw, 4.8rem); line-height: 1.06; font-weight: 800; }
+    h2 { font-size: clamp(1.9rem, 3.5vw, 2.7rem); line-height: 1.15; }
+    h3 { line-height: 1.3; }
+    .section { padding-block: 92px; }
+    .section-heading { max-width: 650px; margin-bottom: 34px; }
+    .section-heading p { color: var(--muted); margin-top: 13px; max-width: 58ch; }
+    .eyebrow {
+      display: inline-flex; align-items: center; gap: 9px;
+      color: var(--accent); font-size: .78rem; font-weight: 700;
+      letter-spacing: .12em; text-transform: uppercase; margin-bottom: 18px;
+    }
+    .eyebrow::before { content: ""; width: 22px; height: 2px; background: currentColor; }
+    .nav {
+      position: sticky; top: 0; z-index: 10;
+      background: color-mix(in srgb, var(--bg) 92%, transparent);
+      border-bottom: 1px solid var(--border); backdrop-filter: blur(14px);
+    }
+    .nav-inner { min-height: 78px; display: flex; align-items: center; justify-content: space-between; gap: 24px; }
+    .wordmark { display: inline-flex; align-items: center; gap: 10px; font-weight: 800; font-size: 1.2rem; text-decoration: none; white-space: nowrap; }
+    .logo-mark { width: 34px; height: 34px; display: grid; place-items: center; border-radius: 10px; background: var(--accent); color: var(--accent-contrast); }
+    .logo-mark svg { width: 21px; height: 21px; }
+    .nav-right { display: flex; align-items: center; gap: 22px; }
+    .nav-links { display: flex; align-items: center; gap: 24px; }
+    .nav-links a { color: var(--muted); font-size: .9rem; font-weight: 600; text-decoration: none; transition: color .2s; }
+    .nav-links a:hover { color: var(--text); }
+    .theme-toggle {
+      width: 40px; height: 40px; display: grid; place-items: center;
+      border: 1px solid var(--border); border-radius: 50%;
+      background: var(--surface); color: var(--text); cursor: pointer;
+    }
+    .theme-toggle:hover { border-color: var(--accent); }
+    .theme-toggle svg { width: 19px; height: 19px; }
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center; gap: 9px;
+      min-height: 46px; padding: 11px 19px; border-radius: 9px;
+      border: 1px solid transparent; text-decoration: none;
+      font-weight: 700; font-size: .92rem; cursor: pointer;
+      transition: transform .18s ease, background .18s ease, border-color .18s ease;
+    }
+    .btn:hover { transform: translateY(-2px); }
+    .btn-primary { background: var(--accent); color: var(--accent-contrast); }
+    .btn-primary:hover { background: var(--accent-hover); }
+    .btn-secondary { border-color: var(--border); background: var(--surface); color: var(--text); }
+    .btn-secondary:hover { border-color: var(--accent); }
+    .btn:focus-visible, a:focus-visible, button:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
+    .hero { padding-block: 82px 76px; display: grid; grid-template-columns: 1.05fr .95fr; align-items: center; gap: 58px; }
+    .hero-copy .lede { color: var(--muted); font-size: 1.12rem; max-width: 56ch; margin-top: 23px; }
+    .cta-row { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 30px; }
+    .hero-note { display: flex; align-items: center; gap: 10px; color: var(--muted); font-size: .85rem; margin-top: 23px; }
+    .status-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--chart-b); }
+    .preview {
+      background: var(--surface); border: 1px solid var(--border); border-radius: 18px;
+      padding: 20px; box-shadow: var(--shadow); min-width: 0;
+    }
+    .preview-top { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding-bottom: 18px; border-bottom: 1px solid var(--border); }
+    .preview-title { font-weight: 700; font-size: .92rem; }
+    .preview-tag { font-size: .72rem; font-weight: 700; color: var(--chart-b); background: color-mix(in srgb, var(--chart-b) 12%, var(--surface)); padding: 5px 9px; border-radius: 99px; }
+    .preview-metrics { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; padding-block: 17px; }
+    .metric { background: var(--surface-soft); border-radius: 10px; padding: 12px; min-width: 0; }
+    .metric span { display: block; color: var(--muted); font-size: .7rem; }
+    .metric strong { display: block; margin-top: 3px; font-family: "Manrope", sans-serif; font-size: clamp(.95rem, 2vw, 1.35rem); }
+    .chart-box { background: var(--surface-soft); border-radius: 12px; padding: 16px 14px 10px; }
+    .chart-label { font-size: .78rem; font-weight: 700; margin-bottom: 12px; }
+    .chart-bars { height: 145px; display: flex; align-items: end; gap: 12px; border-bottom: 1px solid var(--border); padding: 0 8px; }
+    .bar { flex: 1; min-width: 10px; border-radius: 5px 5px 0 0; background: var(--chart-a); opacity: .9; }
+    .bar:nth-child(2n) { background: var(--chart-b); }
+    .bar:nth-child(3n) { background: var(--chart-c); }
+    .chart-legend { display: flex; gap: 15px; flex-wrap: wrap; margin-top: 12px; color: var(--muted); font-size: .72rem; }
+    .legend-item { display: inline-flex; align-items: center; gap: 6px; }
+    .legend-dot { width: 7px; height: 7px; border-radius: 2px; background: var(--chart-a); }
+    .legend-item:nth-child(2) .legend-dot { background: var(--chart-b); }
+    .legend-item:nth-child(3) .legend-dot { background: var(--chart-c); }
+    .trust-strip { border-block: 1px solid var(--border); }
+    .trust-inner { display: flex; align-items: center; justify-content: center; gap: 18px 38px; flex-wrap: wrap; padding-block: 22px; color: var(--muted); font-size: .85rem; }
+    .trust-inner strong { color: var(--text); font-weight: 700; }
+    .feature-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+    .feature-card { padding: 24px; background: var(--surface); border: 1px solid var(--border); border-radius: 14px; transition: transform .2s, border-color .2s; }
+    .feature-card:hover { transform: translateY(-3px); border-color: color-mix(in srgb, var(--accent) 55%, var(--border)); }
+    .feature-icon { width: 42px; height: 42px; display: grid; place-items: center; border-radius: 11px; background: color-mix(in srgb, var(--accent) 12%, var(--surface)); color: var(--accent); margin-bottom: 20px; }
+    .feature-icon svg { width: 21px; height: 21px; }
+    .feature-card h3 { font-size: 1.05rem; margin-bottom: 9px; }
+    .feature-card p { color: var(--muted); font-size: .91rem; }
+    .steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; counter-reset: step; }
+    .step { position: relative; padding: 26px; background: var(--surface); border: 1px solid var(--border); border-radius: 14px; }
+    .step-number { display: inline-grid; place-items: center; width: 36px; height: 36px; border-radius: 10px; background: var(--accent); color: var(--accent-contrast); font-weight: 800; font-size: .85rem; margin-bottom: 20px; }
+    .step h3 { font-size: 1.08rem; margin-bottom: 8px; }
+    .step p { color: var(--muted); font-size: .92rem; }
+    .stack-section { background: var(--surface); border-block: 1px solid var(--border); }
+    .stack-layout { display: grid; grid-template-columns: .8fr 1.2fr; gap: 60px; align-items: start; }
+    .stack-layout .section-heading { margin-bottom: 0; }
+    .stack-list { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+    .stack-item { display: flex; align-items: center; gap: 12px; padding: 15px; border: 1px solid var(--border); border-radius: 10px; background: var(--bg); font-weight: 700; font-size: .9rem; }
+    .stack-symbol { display: grid; place-items: center; width: 30px; height: 30px; flex: 0 0 auto; border-radius: 8px; background: var(--surface-soft); color: var(--accent); font-size: .75rem; font-weight: 800; }
+    .cta-panel { display: flex; justify-content: space-between; align-items: center; gap: 28px; padding: 38px; border-radius: 18px; background: var(--surface); border: 1px solid var(--border); }
+    .cta-panel p { color: var(--muted); margin-top: 8px; }
+    footer { border-top: 1px solid var(--border); padding-block: 25px; }
+    .footer-inner { display: flex; align-items: center; justify-content: space-between; gap: 14px; flex-wrap: wrap; color: var(--muted); font-size: .84rem; }
+    .footer-inner a { text-underline-offset: 3px; }
+    @media (max-width: 900px) {
+      .hero { grid-template-columns: 1fr; gap: 42px; padding-block: 64px; }
+      .hero-copy { max-width: 720px; }
+      .preview { max-width: 650px; width: 100%; margin-inline: auto; }
+      .feature-grid { grid-template-columns: repeat(2, 1fr); }
+      .stack-layout { grid-template-columns: 1fr; gap: 30px; }
+    }
+    @media (max-width: 640px) {
+      .wrap { width: min(100% - 32px, 1120px); }
+      .nav-inner { min-height: 70px; gap: 12px; }
+      .nav-right { gap: 9px; }
+      .nav-links { display: none; }
+      .wordmark { font-size: 1.05rem; }
+      .nav .btn { min-height: 40px; padding: 9px 12px; font-size: .82rem; }
+      .theme-toggle { width: 38px; height: 38px; }
+      .hero { padding-block: 52px; }
+      .hero-copy .lede { font-size: 1rem; }
+      .section { padding-block: 64px; }
+      .feature-grid, .steps { grid-template-columns: 1fr; }
+      .preview { padding: 14px; }
+      .preview-metrics { gap: 7px; }
+      .metric { padding: 10px 8px; }
+      .chart-bars { gap: 7px; }
+      .stack-list { grid-template-columns: 1fr 1fr; }
+      .stack-item { padding: 11px 9px; font-size: .82rem; }
+      .cta-panel { align-items: flex-start; flex-direction: column; padding: 25px; }
+      .footer-inner { flex-direction: column; align-items: flex-start; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; }
+    }
+  </style>
+</head>
+<body>
+  <nav class="nav">
+    <div class="wrap nav-inner">
+      <a class="wordmark" href="#" aria-label="CloudViz home">
+        <span class="logo-mark" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M4 17l5-6 4 3 7-8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M15 6h5v5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </span>
+        CloudViz
+      </a>
+      <div class="nav-right">
+        <div class="nav-links" aria-label="Main navigation">
+          <a href="#features">Features</a>
+          <a href="#how-it-works">How it works</a>
+          <a href="#technology">Technology</a>
+        </div>
+        <button class="theme-toggle" id="themeToggle" type="button" aria-label="Switch to dark mode" title="Toggle theme">
+          <svg id="themeIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8Z"/></svg>
+        </button>
+        <a class="btn btn-primary" href="index.html">Open Tool <span aria-hidden="true">→</span></a>
+      </div>
+    </div>
+  </nav>
+
+  <main>
+    <header class="wrap hero">
+      <div class="hero-copy">
+        <span class="eyebrow">Data exploration, made clearer</span>
+        <h1>Turn raw data into meaningful insights.</h1>
+        <p class="lede">Explore datasets, discover chart recommendations, and understand what your data is telling you — without getting lost in the setup.</p>
+        <div class="cta-row">
+          <a class="btn btn-primary" href="index.html">Explore CloudViz <span aria-hidden="true">→</span></a>
+          <a class="btn btn-secondary" href="#features">Discover features</a>
+        </div>
+        <div class="hero-note"><span class="status-dot" aria-hidden="true"></span> Work with sample datasets or upload your own CSV.</div>
+      </div>
+
+      <div class="preview" aria-label="Illustrative CloudViz dashboard preview">
+        <div class="preview-top">
+          <span class="preview-title">Dataset overview</span>
+          <span class="preview-tag">Preview</span>
+        </div>
+        <div class="preview-metrics">
+          <div class="metric"><span>Records</span><strong>2,480</strong></div>
+          <div class="metric"><span>Columns</span><strong>12</strong></div>
+          <div class="metric"><span>Chart types</span><strong>6</strong></div>
+        </div>
+        <div class="chart-box">
+          <div class="chart-label">Explore your data</div>
+          <div class="chart-bars" aria-hidden="true">
+            <span class="bar" style="height:38%"></span><span class="bar" style="height:58%"></span>
+            <span class="bar" style="height:46%"></span><span class="bar" style="height:78%"></span>
+            <span class="bar" style="height:64%"></span><span class="bar" style="height:91%"></span>
+            <span class="bar" style="height:73%"></span><span class="bar" style="height:100%"></span>
+          </div>
+          <div class="chart-legend">
+            <span class="legend-item"><i class="legend-dot"></i> Dataset values</span>
+            <span class="legend-item"><i class="legend-dot"></i> Trends</span>
+            <span class="legend-item"><i class="legend-dot"></i> Comparisons</span>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <div class="trust-strip">
+      <div class="wrap trust-inner">
+        <span>From data source to visualization</span><strong>Load</strong><span>→</span><strong>Explore</strong><span>→</span><strong>Understand</strong>
+      </div>
+    </div>
+
+    <section class="wrap section" id="features">
+      <div class="section-heading">
+        <span class="eyebrow">Features</span>
+        <h2>Everything you need to start exploring.</h2>
+        <p>Move from a dataset to a useful visual, with profiling and summary statistics available along the way.</p>
+      </div>
+      <div class="feature-grid">
+        <article class="feature-card">
+          <div class="feature-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 19V5M4 19h17"/><rect x="7" y="11" width="3" height="5" rx="1"/><rect x="13" y="7" width="3" height="9" rx="1"/><rect x="19" y="3" width="2" height="13" rx="1"/></svg></div>
+          <h3>Chart recommendations</h3><p>Get chart suggestions based on the data you load, then choose the view that fits your question.</p>
+        </article>
+        <article class="feature-card">
+          <div class="feature-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 19V5M4 19h16"/><path d="M6 15l4-5 3 2 5-7"/></svg></div>
+          <h3>Interactive visualizations</h3><p>Switch between bar, line, pie, doughnut, radar, and scatter visualizations.</p>
+        </article>
+        <article class="feature-card">
+          <div class="feature-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M5 4h14v16H5zM8 8h8M8 12h8M8 16h5"/></svg></div>
+          <h3>Data profiling</h3><p>Review row and column counts, missing values, unique values, and column types.</p>
+        </article>
+        <article class="feature-card">
+          <div class="feature-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 19h16M6 16V9M11 16V5M16 16v-4"/></svg></div>
+          <h3>Numeric statistics</h3><p>Inspect valid counts, mean, median, minimum, maximum, and standard deviation.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="section" id="how-it-works">
+      <div class="wrap">
+        <div class="section-heading">
+          <span class="eyebrow">How it works</span>
+          <h2>Three steps from data to a clearer picture.</h2>
+          <p>Keep the workflow simple: bring in data, explore suggestions, and inspect the results.</p>
+        </div>
+        <div class="steps">
+          <article class="step"><span class="step-number">01</span><h3>Load a dataset</h3><p>Select a dataset available in the app or upload a CSV file from your device.</p></article>
+          <article class="step"><span class="step-number">02</span><h3>Explore recommendations</h3><p>Review suggested charts and choose the columns and visualization you want to inspect.</p></article>
+          <article class="step"><span class="step-number">03</span><h3>Understand the data</h3><p>Generate a chart, view the data profile, and check numeric summary statistics.</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="stack-section section" id="technology">
+      <div class="wrap stack-layout">
+        <div class="section-heading">
+          <span class="eyebrow">Technology</span>
+          <h2>Built with a practical, connected stack.</h2>
+          <p>CloudViz brings together a browser-based interface, a Python API, and a database for dataset storage.</p>
+        </div>
+        <div class="stack-list">
+          <div class="stack-item"><span class="stack-symbol">Py</span>Python</div>
+          <div class="stack-item"><span class="stack-symbol">Fl</span>Flask</div>
+          <div class="stack-item"><span class="stack-symbol">DB</span>MongoDB Atlas</div>
+          <div class="stack-item"><span class="stack-symbol">JS</span>JavaScript</div>
+          <div class="stack-item"><span class="stack-symbol">C</span>Chart.js</div>
+          <div class="stack-item"><span class="stack-symbol">CSV</span>Papa Parse</div>
+          <div class="stack-item"><span class="stack-symbol">Pd</span>Pandas</div>
+          <div class="stack-item"><span class="stack-symbol">UI</span>HTML &amp; CSS</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="wrap section">
+      <div class="cta-panel">
+        <div><span class="eyebrow">Ready to explore?</span><h2>Make your data easier to read.</h2><p>Open CloudViz and start with a dataset or your own CSV.</p></div>
+        <a class="btn btn-primary" href="index.html">Open CloudViz <span aria-hidden="true">→</span></a>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="wrap footer-inner">
+      <span>© <span id="year"></span> CloudViz · Built by Aslam</span>
+      <a href="#top" onclick="window.scrollTo({top:0,behavior:'smooth'}); return false;">Back to top ↑</a>
+    </div>
+  </footer>
+
+  <script>
+    (() => {
+      const root = document.documentElement;
+      const toggle = document.getElementById("themeToggle");
+      const icon = document.getElementById("themeIcon");
+      const metaTheme = document.querySelector('meta[name="theme-color"]');
+      const savedTheme = localStorage.getItem("cloudviz-theme");
+      const systemPrefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+
+      function applyTheme(theme) {
+        root.setAttribute("data-theme", theme);
+        localStorage.setItem("cloudviz-theme", theme);
+        const isDark = theme === "dark";
+        toggle.setAttribute("aria-label", isDark ? "Switch to light mode" : "Switch to dark mode");
+        icon.innerHTML = isDark
+          ? '<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>'
+          : '<path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8Z"/>';
+        metaTheme.setAttribute("content", isDark ? "#1C1917" : "#F7F7F2");
+      }
+
+      applyTheme(savedTheme || (systemPrefersDark ? "dark" : "light"));
+      toggle.addEventListener("click", () => {
+        applyTheme(root.getAttribute("data-theme") === "dark" ? "light" : "dark");
+      });
+      document.getElementById("year").textContent = new Date().getFullYear();
+    })();
+  </script>
+</body>
+</html>

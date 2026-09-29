@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <link rel="icon" href="data:,">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Data Visualizer</title>
+
+  <!-- Apply the theme saved by the homepage before the page renders -->
+  <script>
+    (function () {
+      const savedTheme = localStorage.getItem("cloudviz-theme");
+      const systemPrefersDark = window.matchMedia(
+        "(prefers-color-scheme: dark)"
+      ).matches;
+
+      const theme = savedTheme ||
+        (systemPrefersDark ? "dark" : "light");
+
+      document.documentElement.setAttribute("data-theme", theme);
+    })();
+  </script>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+  <link
+    href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
+    rel="stylesheet"
+  >
+
+  <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+
+  <div class="aurora" aria-hidden="true">
+    <div class="aurora__blob aurora__blob--1"></div>
+    <div class="aurora__blob aurora__blob--2"></div>
+    <div class="aurora__blob aurora__blob--3"></div>
+    <div class="aurora__blob aurora__blob--4"></div>
+    <div class="aurora__grain"></div>
+  </div>
+
+  <div class="page">
+
+    <header class="hero">
+      <span class="eyebrow">Live · MongoDB Atlas</span>
+      <h1>Data Visualizer</h1>
+      <p class="subtitle">
+        Pick a dataset or drop in a CSV, choose your axes,
+        and render a chart in seconds.
+      </p>
+    </header>
+
+    <main class="stack">
+
+      <div class="cards-grid">
+
+        <section class="panel card">
+          <div class="card-title">
+            <h2>Source</h2>
+            <p class="card-desc">
+              Bring your data — pick a dataset or drop in a CSV.
+            </p>
+          </div>
+
+          <div class="field-grid">
+
+            <div class="field">
+              <label for="datasetSelect">Dataset</label>
+
+              <select
+                id="datasetSelect"
+                onchange="fetchData(this.value)"
+              >
+                <option value="">— Select —</option>
+                <option value="Spotify">Spotify</option>
+                <option value="Uber">Uber</option>
+                <option value="Amazon">Amazon</option>
+                <option value="netflix">Netflix</option>
+              </select>
+            </div>
+
+            <div class="field">
+              <label for="fileInput">Or upload CSV</label>
+
+              <input
+                type="file"
+                id="fileInput"
+                accept=".csv"
+                onchange="handleFileUpload(event)"
+              >
+            </div>
+
+          </div>
+        </section>
+
+        <section class="panel card">
+          <div class="card-title">
+            <h2>Chart setup</h2>
+            <p class="card-desc">
+              Tell us what to plot against what.
+            </p>
+          </div>
+
+          <div class="field-grid">
+
+            <div class="field">
+              <label for="xAxisSelect">X-Axis</label>
+              <select id="xAxisSelect"></select>
+            </div>
+
+            <div class="field">
+              <label for="yAxisSelect">Y-Axis</label>
+              <select id="yAxisSelect"></select>
+            </div>
+
+          </div>
+        </section>
+
+      </div>
+
+      <div class="actions">
+
+        <div class="field graph-type-field">
+          <label for="graphTypeSelect">Graph type</label>
+
+          <select id="graphTypeSelect">
+            <option value="bar">Bar</option>
+            <option value="line">Line</option>
+            <option value="pie">Pie</option>
+            <option value="doughnut">Doughnut</option>
+            <option value="radar">Radar</option>
+            <option value="scatterTrendline">Scatter + Trendline</option>
+          </select>
+        </div>
+
+        <button class="primary" onclick="updateGraph()">
+          Generate graph
+        </button>
+
+      </div>
+
+      <!-- Recommendations -->
+      <section class="panel card" id="recommendationsCard">
+
+        <div class="card-title">
+          <h2>CloudViz Recommendations</h2>
+          <p class="card-desc">
+            Recommended visualizations for your dataset.
+          </p>
+        </div>
+
+        <div id="recommendationsList">
+          <p class="recommendations-empty">
+            Select a dataset to get recommendations.
+          </p>
+        </div>
+
+      </section>
+
+      <!-- Data Profiling -->
+      <div class="profile-toggle-row">
+        <button
+          type="button"
+          class="primary"
+          id="profileToggleBtn"
+          onclick="toggleDataProfile()"
+        >
+          View Data Profile
+        </button>
+      </div>
+
+      <section class="panel card" id="profilingCard" hidden>
+
+        <div class="card-title">
+          <h2>Data Profile</h2>
+          <p class="card-desc">
+            Understand your dataset's structure and data quality.
+          </p>
+        </div>
+
+        <div class="profile-stats" id="profileStats">
+
+          <div class="profile-stat">
+            <span class="profile-stat-label">Rows</span>
+            <strong id="profileRows">—</strong>
+          </div>
+
+          <div class="profile-stat">
+            <span class="profile-stat-label">Columns</span>
+            <strong id="profileColumns">—</strong>
+          </div>
+
+          <div class="profile-stat">
+            <span class="profile-stat-label">Missing Values</span>
+            <strong id="profileMissing">—</strong>
+          </div>
+
+          <div class="profile-stat">
+            <span class="profile-stat-label">Numeric Columns</span>
+            <strong id="profileNumeric">—</strong>
+          </div>
+
+          <div class="profile-stat">
+            <span class="profile-stat-label">Categorical Columns</span>
+            <strong id="profileCategorical">—</strong>
+          </div>
+
+        </div>
+
+        <div class="profile-table-wrap">
+          <h3>Column Details</h3>
+
+          <table class="profile-table">
+            <thead>
+              <tr>
+                <th>Column</th>
+                <th>Data Type</th>
+                <th>Missing</th>
+                <th>Unique Values</th>
+              </tr>
+            </thead>
+
+            <tbody id="profileTableBody">
+              <tr>
+                <td colspan="4">
+                  Select a dataset to view its profile.
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+      </section>
+
+      <!-- Chart -->
+      <section class="panel card" id="chartCard">
+
+        <div class="card-title">
+          <h2>Chart</h2>
+          <p class="card-desc">
+            Your rendered graph, live.
+          </p>
+        </div>
+
+        <div class="chart-wrap">
+          <canvas id="myChart"></canvas>
+        </div>
+
+        <!-- Numeric Summary Statistics -->
+        <div class="profile-table-wrap">
+          <h3>Numeric Summary Statistics</h3>
+
+          <table class="profile-table">
+            <thead>
+              <tr>
+                <th>Column</th>
+                <th>Valid Values</th>
+                <th>Mean</th>
+                <th>Median</th>
+                <th>Minimum</th>
+                <th>Maximum</th>
+                <th>Std. Deviation</th>
+              </tr>
+            </thead>
+
+            <tbody id="numericStatsBody">
+              <tr>
+                <td colspan="7">
+                  Select a dataset to view numeric statistics.
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+      </section>
+
+    </main>
+  </div>
+
+  <script src="script.js"></script>
+
+</body>
+</html>
