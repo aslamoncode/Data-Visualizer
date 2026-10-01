@@ -514,7 +514,16 @@ function updateGraph() {
         return;
     }
 
-    generateGraph(xColumn, yColumn, chartType);
+   generateGraph(xColumn, yColumn, chartType);
+
+const chartCard = document.getElementById("chartCard");
+
+if (chartCard) {
+    chartCard.scrollIntoView({
+        behavior: "smooth",
+        block: "start"
+    });
+}
 }
 
 /* ==========================================
